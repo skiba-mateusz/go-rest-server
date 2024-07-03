@@ -7,6 +7,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/skiba-mateusz/go-rest-server/cmd/api"
+	"github.com/skiba-mateusz/go-rest-server/database"
 )
 
 func main() {
@@ -14,6 +15,13 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 	port := os.Getenv("PORT")
+	mongoURI := os.Getenv("MONGO_URI")
+
+	_, err := database.NewMongoClient(mongoURI)
+	if err != nil {
+		log.Fatal("Could not connect DB: ", err)
+	}
+	log.Println("DB connected")
 
 	server := api.NewAPIServer(fmt.Sprintf(":%s", port))
 	if err := server.Run(); err != nil {
