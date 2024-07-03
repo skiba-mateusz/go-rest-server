@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '${PORT}:8080'
+    depends_on:
+      - mongo
+    environment:
+      MONGO_URI: '${MONGO_URI}'
+      PORT: '${PORT}'
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: '{$MONGO_INITDB_ROOT_USERNAME}'
+      MONGO_INITDB_ROOT_PASSWORD: '{$MONGO_INITDB_ROOT_PASSWORD}'
+    volumes:
+      - mongo_data:/data/db
+
+volumes:
+  mongo_data:

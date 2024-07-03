@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -12,10 +13,9 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	port := os.Getenv("PORT")
 
-	listenAddr := os.Getenv("LISTEN_ADDR")
-
-	server := api.NewAPIServer(listenAddr)
+	server := api.NewAPIServer(fmt.Sprintf(":%s", port))
 	if err := server.Run(); err != nil {
 		log.Fatal("Could not run server: ", err)
 	}
