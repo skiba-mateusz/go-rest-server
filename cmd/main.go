@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/skiba-mateusz/go-rest-server/cmd/api"
@@ -12,13 +11,13 @@ import (
 func main() {
 	cfg := config.Init()
 
-	_, err := database.NewMongoClient(cfg.MongoURI)
+	mongoClient, err := database.NewMongoClient(cfg.MongoURI)
 	if err != nil {
 		log.Fatal("Could not connect DB: ", err)
 	}
 	log.Println("DB connected")
 
-	server := api.NewAPIServer(fmt.Sprintf(":%s", cfg.Port))
+	server := api.NewAPIServer(cfg, mongoClient)
 	if err := server.Run(); err != nil {
 		log.Fatal("Could not run server: ", err)
 	}

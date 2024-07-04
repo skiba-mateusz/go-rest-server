@@ -1,24 +1,35 @@
 package api
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/skiba-mateusz/go-rest-server/config"
+	"github.com/skiba-mateusz/go-rest-server/handlers"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type APIServer struct {
-	listenAddr string
+	cfg         config.Config
+	mongoClient *mongo.Client
 }
 
-func NewAPIServer(listenAddr string) *APIServer {
+func NewAPIServer(cfg config.Config, mongoClient *mongo.Client) *APIServer {
 	return &APIServer{
-		listenAddr: listenAddr,
+		cfg:         cfg,
+		mongoClient: mongoClient,
 	}
 }
 
 func (s *APIServer) Run() error {
 	mux := http.NewServeMux()
 
-	log.Println("Server is listening on:", s.listenAddr)
+	handler := handlers.New(s.cfg, s.mongoClient)
 
-	return http.ListenAndServe(s.listenAddr, mux)
+	mux.HandleFunc("POST /records", handler.GetRecords)
+
+	log.Println("Server is listening on port:", s.cfg.Port)
+
+	return http.ListenAndServe(fmt.Sprintf(":%s", s.cfg.Port), mux)
 }
