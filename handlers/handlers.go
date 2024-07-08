@@ -102,15 +102,12 @@ func (h *Handler) GetRecords(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) InsertRecord(w http.ResponseWriter, r *http.Request) {
 	record := models.MemoryRecord{}
 	if err := parseJSON(r, &record); err != nil {
-		log.Printf("Invalid request body, error: %v", err.Error())
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		writeError(w, http.StatusBadRequest, err)
 		return
 	}
 
 	if record.Key == "" || record.Value == "" {
-		err := fmt.Errorf("key and value are required")
-		log.Print(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, fmt.Errorf("key and value are required"))
 		return
 	}
 
@@ -121,17 +118,13 @@ func (h *Handler) InsertRecord(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) FindRecord(w http.ResponseWriter, r *http.Request) {
 	key := r.URL.Query().Get("key")
 	if key == "" {
-		err := fmt.Errorf("key is empty")
-		log.Print(err)
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeError(w, http.StatusBadRequest, fmt.Errorf("key is empty"))
 		return
 	}
 
 	record, ok := h.memoryDB.FindRecord(key)
 	if !ok {
-		err := fmt.Errorf("could not find record for provided key")
-		log.Print(err)
-		http.Error(w, err.Error(), http.StatusNotFound)
+		writeError(w, http.StatusNotFound, fmt.Errorf("could not find record for provided key"))
 		return
 	}
 

@@ -28,8 +28,8 @@ func (s *APIServer) Run() error {
 	handler := handlers.New(s.cfg, s.mongoClient)
 
 	mux.HandleFunc("POST /records", handler.GetRecords)
-	mux.HandleFunc("POST /insert-record", handler.InsertRecord)
-	mux.HandleFunc("GET /find-record", handler.FindRecord)
+	mux.HandleFunc("POST /memory", handler.InsertRecord)
+	mux.HandleFunc("GET /memory", handler.FindRecord)
 
 	log.Println("Server is listening on port:", s.cfg.Port)
 
