@@ -31,6 +31,11 @@ func (p *RequestPayload) Validate() error {
 	return nil
 }
 
+type MemoryRecord struct {
+	Key   string `json:"key"`
+	Value string `json:"value"`
+}
+
 type MongoRecord struct {
 	ID         string    `bson:"_id" json:"-"`
 	Key        string    `bson:"key" json:"key"`
